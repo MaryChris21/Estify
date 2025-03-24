@@ -3,7 +3,26 @@ import Property from "../Models/propertyModel.js";
 export const submitPropertyRequest = async (req, res) => {
   try {
     const image = req.file?.filename || null;
-    const newProperty = new Property({ ...req.body, image });
+    const {
+      title,
+      description,
+      contactName,
+      contactNumber,
+      propertyType,
+      district,
+      price
+    } = req.body;
+
+    const newProperty = new Property({
+      title,
+      description,
+      contactName,
+      contactNumber,
+      propertyType,
+      district,
+      price,
+      image
+    });
     await newProperty.save();
     res.status(201).json({ message: "Request submitted for approval." });
   } catch (error) {
@@ -29,6 +48,8 @@ export const approvePropertyRequest = async (req, res) => {
         original.contactName = property.contactName;
         original.contactNumber = property.contactNumber;
         original.propertyType = property.propertyType;
+        original.district = property.district;
+        original.price = property.price;
         if (property.image) original.image = property.image;
         await original.save();
         await Property.findByIdAndDelete(property._id);
@@ -62,18 +83,31 @@ export const getPropertyById = async (req, res) => {
 export const requestPropertyUpdate = async (req, res) => {
   try {
     const image = req.file?.filename || null;
-    const { originalPropertyId, title, description, contactName, contactNumber, propertyType } = req.body;
+    const {
+      originalPropertyId,
+      title,
+      description,
+      contactName,
+      contactNumber,
+      propertyType,
+      district,
+      price
+    } = req.body;
+
     const newRequest = new Property({
       title,
       description,
       contactName,
       contactNumber,
       propertyType,
+      district,
+      price,
       image,
       status: "pending",
       requestType: "update",
-      originalPropertyId,
+      originalPropertyId
     });
+
     await newRequest.save();
     res.status(200).json({ message: "Update request submitted." });
   } catch (err) {
@@ -111,8 +145,6 @@ export const rejectPropertyRequest = async (req, res) => {
   }
 };
 
-
-
 export const requestPropertyDelete = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -127,4 +159,3 @@ export const requestPropertyDelete = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-

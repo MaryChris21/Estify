@@ -22,6 +22,8 @@ const PropertyTable = ({ properties, refresh }) => {
     data.append("contactName", formData.contactName);
     data.append("contactNumber", formData.contactNumber);
     data.append("propertyType", formData.propertyType);
+    data.append("district", formData.district);
+    data.append("price", formData.price);
     data.append("originalPropertyId", formData._id);
 
     try {
@@ -49,6 +51,8 @@ const PropertyTable = ({ properties, refresh }) => {
           <th className="p-3">Title</th>
           <th className="p-3">Description</th>
           <th className="p-3">Type</th>
+          <th className="p-3">District</th>
+          <th className="p-3">Price</th>
           <th className="p-3">Contact</th>
           <th className="p-3">Actions</th>
         </tr>
@@ -93,6 +97,31 @@ const PropertyTable = ({ properties, refresh }) => {
                 </select>
               ) : (
                 prop.propertyType
+              )}
+            </td>
+            <td className="p-3">
+              {editing === prop._id ? (
+                <input
+                  name="district"
+                  value={formData.district}
+                  onChange={handleChange}
+                  className="border p-1 rounded w-full"
+                />
+              ) : (
+                prop.district
+              )}
+            </td>
+            <td className="p-3">
+              {editing === prop._id ? (
+                <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  className="border p-1 rounded w-full"
+                />
+              ) : (
+                `LKR ${prop.price?.toLocaleString()} ${prop.propertyType === "rent" ? "(Monthly)" : "(Total)"}`
               )}
             </td>
             <td className="p-3">

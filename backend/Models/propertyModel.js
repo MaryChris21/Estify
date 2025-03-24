@@ -15,8 +15,9 @@ const propertySchema = new mongoose.Schema({
   contactName: {
     type: String,
     required: [true, "Contact name is required"],
-    trim: true
-  },
+    trim: true,
+    match: [/^[A-Za-z\s]+$/, "Contact name must contain only letters"]
+  },  
   contactNumber: {
     type: String,
     required: [true, "Mobile number is required"],
@@ -26,6 +27,16 @@ const propertySchema = new mongoose.Schema({
     type: String,
     enum: ["rent", "selling"],
     required: [true, "Property type is required"]
+  },
+  district: {
+    type: String,
+    required: [true, "District is required"],
+    trim: true
+  },
+  price: {
+    type: Number,
+    required: [true, "Price is required"],
+    min: [0, "Price cannot be negative"]
   },
   image: {
     type: String

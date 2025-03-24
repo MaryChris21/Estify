@@ -58,6 +58,12 @@ const AdminDashboard = () => {
                   <h3 className="text-2xl font-bold mb-2">{req.title}</h3>
                   <p className="text-gray-700 mb-2">{req.description}</p>
                   <p className="text-sm text-gray-600">Type: <span className="font-medium">{req.propertyType}</span></p>
+                  <p className="text-sm text-gray-600">District: <span className="font-medium">{req.district}</span></p>
+                  <p className="text-sm text-gray-600">
+                    Price: <span className="font-medium">
+                      LKR {req.price?.toLocaleString()} {req.propertyType === "rent" ? "(Monthly)" : "(Total)"}
+                    </span>
+                  </p>
                   <p className="text-sm text-gray-600">Request Type: <span className="capitalize font-medium">{req.requestType}</span></p>
                   <p className="text-sm text-gray-600 mt-2">Contact Person: <span className="font-medium">{req.contactName}</span></p>
                   <p className="text-sm text-gray-600">Contact Number: <span className="font-medium">{req.contactNumber}</span></p>
