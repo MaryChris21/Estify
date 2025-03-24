@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { DISTRICTS } from "../constants/districts";
 
 const PropertyTable = ({ properties, refresh }) => {
   const [editing, setEditing] = useState(null);
@@ -101,12 +102,19 @@ const PropertyTable = ({ properties, refresh }) => {
             </td>
             <td className="p-3">
               {editing === prop._id ? (
-                <input
+                <select
                   name="district"
                   value={formData.district}
                   onChange={handleChange}
                   className="border p-1 rounded w-full"
-                />
+                >
+                  <option value="">Select District</option>
+                  {DISTRICTS.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
               ) : (
                 prop.district
               )}
@@ -121,7 +129,9 @@ const PropertyTable = ({ properties, refresh }) => {
                   className="border p-1 rounded w-full"
                 />
               ) : (
-                `LKR ${prop.price?.toLocaleString()} ${prop.propertyType === "rent" ? "(Monthly)" : "(Total)"}`
+                `LKR ${prop.price?.toLocaleString()} ${
+                  prop.propertyType === "rent" ? "(Monthly)" : "(Total)"
+                }`
               )}
             </td>
             <td className="p-3">

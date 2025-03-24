@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { DISTRICTS } from "../constants/districts";
 
 const AdminDashboard = () => {
   const [requests, setRequests] = useState([]);
@@ -7,7 +8,22 @@ const AdminDashboard = () => {
 
   const fetchPending = async () => {
     const res = await axios.get("http://localhost:5001/api/properties/pending");
-    setRequests(res.data);
+    const requestsWithOriginals = await Promise.all(
+      res.data.map(async (req) => {
+        if (req.requestType === "update" && req.originalPropertyId) {
+          try {
+            const original = await axios.get(
+              `http://localhost:5001/api/properties/${req.originalPropertyId}`
+            );
+            return { ...req, original: original.data };
+          } catch {
+            return req;
+          }
+        }
+        return req;
+      })
+    );
+    setRequests(requestsWithOriginals);
   };
 
   useEffect(() => {
@@ -24,7 +40,15 @@ const AdminDashboard = () => {
     fetchPending();
   };
 
-  const filteredRequests = filterType === "all" ? requests : requests.filter(r => r.requestType === filterType);
+  const highlightClass = (field, req) =>
+    req.original && req.original[field] !== req[field]
+      ? "bg-yellow-100 border-l-4 border-yellow-500 pl-2"
+      : "";
+
+  const filteredRequests =
+    filterType === "all"
+      ? requests
+      : requests.filter((r) => r.requestType === filterType);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -32,7 +56,11 @@ const AdminDashboard = () => {
 
       <div className="mb-6 text-center">
         <label className="mr-3 font-medium">Filter by Request Type:</label>
-        <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className="border p-2 rounded">
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+          className="border p-2 rounded"
+        >
           <option value="all">All</option>
           <option value="add">Add</option>
           <option value="update">Update</option>
@@ -46,7 +74,7 @@ const AdminDashboard = () => {
         <div className="space-y-6">
           {filteredRequests.map((req) => (
             <div key={req._id} className="bg-white p-6 rounded-xl shadow-md">
-              <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex flex-col md:flex-row gap-6">
                 {req.image && (
                   <img
                     src={`http://localhost:5001/uploads/${req.image}`}
@@ -55,18 +83,35 @@ const AdminDashboard = () => {
                   />
                 )}
                 <div className="flex-1">
-                  <h3 className="text-2xl font-bold mb-2">{req.title}</h3>
-                  <p className="text-gray-700 mb-2">{req.description}</p>
-                  <p className="text-sm text-gray-600">Type: <span className="font-medium">{req.propertyType}</span></p>
-                  <p className="text-sm text-gray-600">District: <span className="font-medium">{req.district}</span></p>
-                  <p className="text-sm text-gray-600">
-                    Price: <span className="font-medium">
-                      LKR {req.price?.toLocaleString()} {req.propertyType === "rent" ? "(Monthly)" : "(Total)"}
-                    </span>
+                  <h2 className="text-xl font-bold mb-3">Requested Changes</h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <h3 className="font-semibold">New</h3>
+                      <p className={`text-gray-700 ${highlightClass("title", req)}`}>Title: {req.title}</p>
+                      <p className={`text-gray-700 ${highlightClass("description", req)}`}>Description: {req.description}</p>
+                      <p className={`text-gray-700 ${highlightClass("propertyType", req)}`}>Type: {req.propertyType}</p>
+                      <p className={`text-gray-700 ${highlightClass("district", req)}`}>District: {req.district}</p>
+                      <p className={`text-gray-700 ${highlightClass("price", req)}`}>Price: LKR {req.price?.toLocaleString()}</p>
+                      <p className={`text-gray-700 ${highlightClass("contactName", req)}`}>Contact Name: {req.contactName}</p>
+                      <p className={`text-gray-700 ${highlightClass("contactNumber", req)}`}>Contact No: {req.contactNumber}</p>
+                    </div>
+                    {req.original && (
+                      <div className="space-y-1">
+                        <h3 className="font-semibold">Original</h3>
+                        <p className="text-gray-600">Title: {req.original.title}</p>
+                        <p className="text-gray-600">Description: {req.original.description}</p>
+                        <p className="text-gray-600">Type: {req.original.propertyType}</p>
+                        <p className="text-gray-600">District: {req.original.district}</p>
+                        <p className="text-gray-600">Price: LKR {req.original.price?.toLocaleString()}</p>
+                        <p className="text-gray-600">Contact Name: {req.original.contactName}</p>
+                        <p className="text-gray-600">Contact No: {req.original.contactNumber}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="text-sm text-gray-500 mt-2">
+                    Request Type: <span className="capitalize font-medium">{req.requestType}</span>
                   </p>
-                  <p className="text-sm text-gray-600">Request Type: <span className="capitalize font-medium">{req.requestType}</span></p>
-                  <p className="text-sm text-gray-600 mt-2">Contact Person: <span className="font-medium">{req.contactName}</span></p>
-                  <p className="text-sm text-gray-600">Contact Number: <span className="font-medium">{req.contactNumber}</span></p>
 
                   <div className="mt-4 flex gap-3">
                     <button
