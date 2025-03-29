@@ -1,9 +1,16 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DISTRICTS } from "../constants/districts";
-import { Home, MapPin, Phone, Image as ImageIcon, BadgePlus } from "lucide-react";
+import { Image as ImageIcon, BadgePlus } from "lucide-react";
+
+// ✅ Import toast functions
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PropertyForm = ({ isUpdate = false, originalPropertyId = null }) => {
+  const navigate = useNavigate();
+
   const initialFormState = {
     title: "",
     description: "",
@@ -44,7 +51,10 @@ const PropertyForm = ({ isUpdate = false, originalPropertyId = null }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      toast.error("Please fix form errors before submitting.");
+      return;
+    }
 
     const data = new FormData();
     for (let key in formData) {
@@ -59,7 +69,7 @@ const PropertyForm = ({ isUpdate = false, originalPropertyId = null }) => {
 
       const token = localStorage.getItem("agentToken");
       if (!token) {
-        alert("Agent is not logged in. Please login to post a property.");
+        toast.error("Agent is not logged in. Please login to continue.");
         return;
       }
 
@@ -70,11 +80,13 @@ const PropertyForm = ({ isUpdate = false, originalPropertyId = null }) => {
         },
       });
 
-      alert("Request submitted for approval.");
+      // ✅ Show success toast and redirect
+      toast.success("Request submitted for approval!");
       setFormData(initialFormState);
+      setTimeout(() => navigate("/agent-dashboard"), 1000);
     } catch (err) {
       console.error(err);
-      alert("Error submitting form");
+      toast.error("Error submitting property. Try again.");
     }
   };
 

@@ -63,7 +63,6 @@ export const approvePropertyRequest = async (req, res) => {
       }
     }
 
-
     property.status = "approved";
     property.requestType = "add";
     await property.save();
@@ -186,8 +185,6 @@ export const getAgentProperties = async (req, res) => {
   }
 };
 
-/* ------------------ ✅ NEW CRUD METHODS (No Admin Approval) ------------------ */
-
 // CREATE PROPERTY DIRECTLY
 export const createPropertyDirect = async (req, res) => {
   try {
@@ -287,5 +284,23 @@ export const getAllAgentProperties = async (req, res) => {
     res.json(properties);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// GET FILTERED REPORT (Dynamic)
+export const getFilteredReport = async (req, res) => {
+  try {
+    const { type, status, district, agentId } = req.query;
+    const query = {};
+
+    if (type) query.propertyType = type;
+    if (status) query.status = status;
+    if (district) query.district = district;
+    if (agentId) query.postedByAgent = agentId;
+
+    const results = await Property.find(query).populate("postedByAgent", "email");
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

@@ -14,7 +14,8 @@ import {
   createPropertyDirect,
   updatePropertyDirect,
   deletePropertyDirect,
-  getAllAgentProperties
+  getAllAgentProperties,
+  getFilteredReport
 } from "../Controllers/propertyController.js";
 
 const router = express.Router();
@@ -25,20 +26,25 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// Agent Routes (with approval flow)
 router.post("/post", verifyAgent, upload.single("image"), submitPropertyRequest);
 router.post("/update", verifyAgent, upload.single("image"), requestPropertyUpdate);
 router.delete("/delete/:id", verifyAgent, requestPropertyDelete);
 router.get("/my-properties", verifyAgent, getAgentProperties);
 
+// Agent Routes (direct CRUD)
 router.post("/direct/add", verifyAgent, upload.single("image"), createPropertyDirect);
 router.put("/direct/update/:id", verifyAgent, upload.single("image"), updatePropertyDirect);
 router.delete("/direct/delete/:id", verifyAgent, deletePropertyDirect);
 router.get("/all-mine", verifyAgent, getAllAgentProperties);
 
+// Admin Routes
 router.get("/pending", getPendingRequests);
 router.post("/approve/:id", approvePropertyRequest);
 router.delete("/reject/:id", rejectPropertyRequest);
+router.get("/report", getFilteredReport);
 
+// Public Routes
 router.get("/", getAllProperties);
 router.get("/:id", getPropertyById);
 router.post("/add", upload.single("image"), submitPropertyRequest);
