@@ -54,7 +54,12 @@ const propertySchema = new mongoose.Schema({
   originalPropertyId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Property"
-  }
+  },
+  postedByAgent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Agent",
+    required: true,
+  },
 }, {
   timestamps: true
 });
