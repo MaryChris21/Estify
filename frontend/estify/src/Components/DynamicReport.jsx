@@ -4,7 +4,11 @@ import { DISTRICTS } from "../constants/districts";
 import { Download } from "lucide-react";
 import Papa from "papaparse";
 import jsPDF from "jspdf";
+<<<<<<< HEAD
 import "jspdf-autotable";
+=======
+import autoTable from "jspdf-autotable";
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
 
 const DynamicReport = () => {
   const [filters, setFilters] = useState({ type: "", status: "", district: "", agentId: "" });
@@ -58,6 +62,11 @@ const DynamicReport = () => {
 
   const exportPDF = () => {
     const doc = new jsPDF();
+<<<<<<< HEAD
+=======
+    doc.text("Property Report", 14, 15);
+
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
     const tableColumn = ["Title", "Type", "District", "Price", "Status", "Agent"];
     const tableRows = reportData.map((item) => [
       item.title,
@@ -68,7 +77,16 @@ const DynamicReport = () => {
       item.postedByAgent?.email || "-"
     ]);
 
+<<<<<<< HEAD
     doc.autoTable({ head: [tableColumn], body: tableRows });
+=======
+    autoTable(doc, {
+      startY: 20,
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
     doc.save("property_report.pdf");
   };
 

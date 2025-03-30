@@ -1,9 +1,20 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DISTRICTS } from "../constants/districts";
+<<<<<<< HEAD
 import { Home, MapPin, Phone, Image as ImageIcon, BadgePlus } from "lucide-react";
+=======
+import { Image as ImageIcon, BadgePlus } from "lucide-react";
+
+// ✅ Import toast functions
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
 
 const PropertyForm = ({ isUpdate = false, originalPropertyId = null }) => {
+  const navigate = useNavigate();
+
   const initialFormState = {
     title: "",
     description: "",
@@ -44,7 +55,14 @@ const PropertyForm = ({ isUpdate = false, originalPropertyId = null }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     if (!validate()) return;
+=======
+    if (!validate()) {
+      toast.error("Please fix form errors before submitting.");
+      return;
+    }
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
 
     const data = new FormData();
     for (let key in formData) {
@@ -59,7 +77,11 @@ const PropertyForm = ({ isUpdate = false, originalPropertyId = null }) => {
 
       const token = localStorage.getItem("agentToken");
       if (!token) {
+<<<<<<< HEAD
         alert("Agent is not logged in. Please login to post a property.");
+=======
+        toast.error("Agent is not logged in. Please login to continue.");
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
         return;
       }
 
@@ -70,11 +92,21 @@ const PropertyForm = ({ isUpdate = false, originalPropertyId = null }) => {
         },
       });
 
+<<<<<<< HEAD
       alert("Request submitted for approval.");
+=======
+      // ✅ Show success toast and redirect
+      toast.success("Request submitted for approval!");
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
       setFormData(initialFormState);
+      setTimeout(() => navigate("/agent-dashboard"), 1000);
     } catch (err) {
       console.error(err);
+<<<<<<< HEAD
       alert("Error submitting form");
+=======
+      toast.error("Error submitting property. Try again.");
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
     }
   };
 

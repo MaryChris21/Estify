@@ -18,7 +18,11 @@ const AgentLogin = () => {
       const res = await axios.post("http://localhost:5001/api/agents/login", form);
       localStorage.setItem("agentToken", res.data.token);
       alert("Login successful!");
+<<<<<<< HEAD
       navigate("/");
+=======
+      navigate("/agent-dashboard");
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
     } catch (err) {
       setError(err.response?.data?.message || "Login failed.");
     }

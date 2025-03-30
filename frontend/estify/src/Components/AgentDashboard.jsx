@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import PropertyTable from "../Components/PropertyTable";
+<<<<<<< HEAD
 import { LogOut, Home } from "lucide-react";
+=======
+import { LogOut, Home, PlusCircle } from "lucide-react";
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
 import { motion } from "framer-motion";
 
 const AgentDashboard = () => {
@@ -27,6 +31,13 @@ const AgentDashboard = () => {
     navigate("/agent-login");
   };
 
+<<<<<<< HEAD
+=======
+  const handlePostAd = () => {
+    navigate("/agent/postad");
+  };
+
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
   useEffect(() => {
     const token = localStorage.getItem("agentToken");
     if (!token) {
@@ -49,6 +60,7 @@ const AgentDashboard = () => {
             <Home className="text-green-600" />
             <h1 className="text-3xl font-bold text-gray-800">Agent Dashboard</h1>
           </div>
+<<<<<<< HEAD
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl shadow"
@@ -56,6 +68,24 @@ const AgentDashboard = () => {
             <LogOut size={18} /> Logout
           </button>
         </div>
+=======
+          <div className="flex gap-3">
+            <button
+              onClick={handlePostAd}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl shadow"
+            >
+              <PlusCircle size={18} /> Post Ad
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl shadow"
+            >
+              <LogOut size={18} /> Logout
+            </button>
+          </div>
+        </div>
+
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}

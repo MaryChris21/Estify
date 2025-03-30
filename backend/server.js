@@ -1,6 +1,12 @@
 import dotenv from "dotenv";
 import express from "express";
+<<<<<<< HEAD
 import mongoose from "mongoose";
+=======
+import connectDB from "./Database/DB.js";
+import PropertyRoutes from "./Routes/PropertyRoutes.js";
+import AgentRoutes from "./Routes/agentRoutes.js";
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
 import path from "path";
 import cors from "cors";
 import morgan from "morgan";
@@ -22,6 +28,7 @@ const app = express();
 // Connect to Database
 connectDB();
 
+<<<<<<< HEAD
 // Middleware
 app.use(helmet());
 app.use(
@@ -32,6 +39,13 @@ app.use(
 );
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
+=======
+app.use(cors({
+  origin: "http://localhost:5173", 
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
 
 // Rate Limiting
 const limiter = rateLimit({
@@ -53,6 +67,11 @@ app.use("/api/auth", AuthRoutes);
 app.use("/api/admin", AdminRoutes);
 app.use("/api/inquiries", InquiryRoutes);
 app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
+<<<<<<< HEAD
+=======
+app.use("/api/agents", AgentRoutes);
+app.use("/api/properties", PropertyRoutes);
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
 
 // Health Check
 app.get("/api/health", (req, res) => {

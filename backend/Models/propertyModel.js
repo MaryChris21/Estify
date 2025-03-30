@@ -53,7 +53,11 @@ const propertySchema = new mongoose.Schema({
   },
   originalPropertyId: {
     type: mongoose.Schema.Types.ObjectId,
+<<<<<<< HEAD
     ref: "Property",
+=======
+    ref: "Property"
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
   },
   postedByAgent: {
     type: mongoose.Schema.Types.ObjectId,
@@ -64,5 +68,10 @@ const propertySchema = new mongoose.Schema({
   timestamps: true,
 });
 
+<<<<<<< HEAD
 // Prevent re-compilation of the model
 export default mongoose.models.Property || mongoose.model("Property", propertySchema);
+=======
+const Property = mongoose.model("Property", propertySchema);
+export default Property;
+>>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8

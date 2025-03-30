@@ -1,3 +1,4 @@
+//This is the property form page
 import React from "react";
 import PropertyForm from "../Components/PropertyForm";
 import PropertyList from "../Components/PropertyList";
