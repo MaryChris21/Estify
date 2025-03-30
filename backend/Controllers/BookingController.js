@@ -1,5 +1,5 @@
-import Booking from "../Model/BookingModel.js";
-import Property from "../Model/PropertyModel.js";
+import Booking from "../Models/BookingModel.js";
+import Property from "../Models/PropertyModel.js";
 
 export const getAllBooking = async (req, res) => {
     const userId = req.user.userId;

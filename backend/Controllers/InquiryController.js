@@ -1,6 +1,6 @@
 // InquiryController.js
-import Inquiry from "../Model/InquiryModel.js"; // Adjusted path with .js extension
-import Booking from "../Model/BookingModel.js"; // Adjusted path with .js extension
+import Inquiry from "../Models/InquiryModel.js"; // Adjusted path with .js extension
+import Booking from "../Models/BookingModel.js"; // Adjusted path with .js extension
 
 export const submitInquiry = async (req, res) => {
     const { bookingId, message } = req.body;

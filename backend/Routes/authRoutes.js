@@ -1,6 +1,6 @@
 // Routes/AuthRoutes.js
 import express from "express";
-import * as AuthController from "../Controller/AuthController.js"; // Adjusted path with .js extension
+import * as AuthController from "../Controllers/AuthController.js"; // Adjusted path with .js extension
 
 const router = express.Router();
 

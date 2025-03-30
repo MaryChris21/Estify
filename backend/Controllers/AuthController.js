@@ -1,5 +1,5 @@
 // UserController.js
-import User from "../Model/UserModel.js"; // Adjusted path to match ES Modules and your model folder
+import User from "../Models/UserModel.js"; // Adjusted path to match ES Modules and your model folder
 import { generateToken } from "../utils/jwt.js"; // Adjusted path with .js extension
 
 // Register a new user

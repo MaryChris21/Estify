@@ -1,6 +1,6 @@
 // Routes/BookingRoutes.js
 import express from "express";
-import * as BookingController from "../Controller/BookingController.js"; // Adjusted path with .js extension
+import * as BookingController from "../Controllers/BookingController.js"; // Adjusted path with .js extension
 import authenticate from "../middleware/authenticate.js"; // Adjusted path with .js extension
 
 const router = express.Router();
