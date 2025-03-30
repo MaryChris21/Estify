@@ -83,7 +83,7 @@ const AdminDashboard = () => {
                   />
                 )}
                 <div className="flex-1">
-                  <h2 className="text-xl font-bold mb-3">Requested Changes</h2>
+                  <h2 className="text-xl font-bold mb-3">Requests</h2>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <h3 className="font-semibold">New</h3>

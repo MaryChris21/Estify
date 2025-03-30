@@ -1,5 +1,8 @@
-import Property from "../Models/propertyModel.js";
+import Property from "../Models/PropertyModel.js";
 
+// 🏠 PROPERTY CONTROLLERS
+
+// SUBMIT NEW PROPERTY (Agent → Admin Approval)
 export const submitPropertyRequest = async (req, res) => {
   try {
     const image = req.file?.filename || null;
@@ -21,8 +24,12 @@ export const submitPropertyRequest = async (req, res) => {
       propertyType,
       district,
       price,
-      image
+      image,
+      status: "pending",
+      requestType: "add",
+      postedByAgent: req.agent.id
     });
+
     await newProperty.save();
     res.status(201).json({ message: "Request submitted for approval." });
   } catch (error) {
@@ -30,6 +37,7 @@ export const submitPropertyRequest = async (req, res) => {
   }
 };
 
+// APPROVE REQUEST (Admin Action)
 export const approvePropertyRequest = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -54,12 +62,10 @@ export const approvePropertyRequest = async (req, res) => {
         await original.save();
         await Property.findByIdAndDelete(property._id);
         return res.json({ message: "Property updated successfully." });
-      } else {
-        return res.status(404).json({ message: "Original property not found." });
       }
+      return res.status(404).json({ message: "Original property not found." });
     }
 
-    // default approval (new add request)
     property.status = "approved";
     property.requestType = "add";
     await property.save();
@@ -69,17 +75,41 @@ export const approvePropertyRequest = async (req, res) => {
   }
 };
 
+// GET ALL APPROVED PROPERTIES WITH FILTERS
 export const getAllProperties = async (req, res) => {
-  const properties = await Property.find({ status: "approved" });
-  res.json(properties);
+  try {
+    const { district, propertyType, minPrice, maxPrice } = req.query;
+    const query = { status: "approved" };
+
+    if (district) query.district = { $regex: district, $options: 'i' };
+    if (propertyType) query.propertyType = propertyType;
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+
+    const properties = await Property.find(query);
+    res.json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
+// GET PROPERTY BY ID (only approved)
 export const getPropertyById = async (req, res) => {
-  const property = await Property.findById(req.params.id);
-  if (!property || property.status !== "approved") return res.status(404).json({ message: "Not found" });
-  res.json(property);
+  try {
+    const property = await Property.findById(req.params.id);
+    if (!property || property.status !== "approved") {
+      return res.status(404).json({ message: "Property not found" });
+    }
+    res.json(property);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
+// REQUEST TO UPDATE PROPERTY (Agent → Admin Approval)
 export const requestPropertyUpdate = async (req, res) => {
   try {
     const image = req.file?.filename || null;
@@ -105,7 +135,8 @@ export const requestPropertyUpdate = async (req, res) => {
       image,
       status: "pending",
       requestType: "update",
-      originalPropertyId
+      originalPropertyId,
+      postedByAgent: req.agent.id
     });
 
     await newRequest.save();
@@ -115,6 +146,24 @@ export const requestPropertyUpdate = async (req, res) => {
   }
 };
 
+// REQUEST TO DELETE PROPERTY (Agent → Admin Approval)
+export const requestPropertyDelete = async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+    if (!property) return res.status(404).json({ message: "Property not found" });
+
+    property.status = "pending";
+    property.requestType = "delete";
+    property.postedByAgent = req.agent.id;
+    await property.save();
+
+    res.json({ message: "Delete request submitted for approval." });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET ALL PENDING REQUESTS (Admin Dashboard)
 export const getPendingRequests = async (req, res) => {
   try {
     const pending = await Property.find({ status: "pending" });
@@ -124,20 +173,19 @@ export const getPendingRequests = async (req, res) => {
   }
 };
 
+// REJECT REQUEST (Admin Action)
 export const rejectPropertyRequest = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
     if (!property) return res.status(404).json({ message: "Request not found." });
 
     if (property.requestType === "delete") {
-      // Restore original status if delete request is rejected
       property.status = "approved";
       property.requestType = "add";
       await property.save();
       return res.json({ message: "Delete request rejected. Property restored." });
     }
 
-    // For update or add requests: remove the request
     await Property.findByIdAndDelete(req.params.id);
     res.json({ message: "Request rejected and deleted." });
   } catch (err) {
@@ -145,17 +193,113 @@ export const rejectPropertyRequest = async (req, res) => {
   }
 };
 
-export const requestPropertyDelete = async (req, res) => {
+// GET APPROVED PROPERTIES FOR LOGGED-IN AGENT
+export const getAgentProperties = async (req, res) => {
   try {
-    const property = await Property.findById(req.params.id);
-    if (!property) return res.status(404).json({ message: "Property not found" });
-
-    property.status = "pending";
-    property.requestType = "delete";
-    await property.save();
-
-    res.json({ message: "Delete request submitted for approval." });
+    const properties = await Property.find({
+      postedByAgent: req.agent.id,
+      status: "approved",
+      requestType: "add"
+    });
+    res.json(properties);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// DIRECT CRUD OPERATIONS
+
+// CREATE PROPERTY DIRECTLY
+export const createPropertyDirect = async (req, res) => {
+  try {
+    const image = req.file?.filename || null;
+    const {
+      title,
+      description,
+      contactName,
+      contactNumber,
+      propertyType,
+      district,
+      price
+    } = req.body;
+
+    const property = new Property({
+      title,
+      description,
+      contactName,
+      contactNumber,
+      propertyType,
+      district,
+      price,
+      image,
+      status: "approved",
+      requestType: "add",
+      postedByAgent: req.agent.id,
+    });
+
+    await property.save();
+    res.status(201).json({ message: "Property added successfully.", property });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// UPDATE PROPERTY DIRECTLY
+export const updatePropertyDirect = async (req, res) => {
+  try {
+    const property = await Property.findOne({
+      _id: req.params.id,
+      postedByAgent: req.agent.id
+    });
+
+    if (!property) return res.status(404).json({ message: "Property not found or unauthorized" });
+
+    const image = req.file?.filename || property.image;
+    const updates = req.body;
+
+    const allowedUpdates = [
+      'title', 'description', 'contactName', 
+      'contactNumber', 'propertyType', 'district', 'price'
+    ];
+    
+    allowedUpdates.forEach(field => {
+      if (updates[field] !== undefined) property[field] = updates[field];
+    });
+
+    property.image = image;
+
+    await property.save();
+    res.json({ message: "Property updated successfully.", property });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// DELETE PROPERTY DIRECTLY
+export const deletePropertyDirect = async (req, res) => {
+  try {
+    const property = await Property.findOneAndDelete({
+      _id: req.params.id,
+      postedByAgent: req.agent.id
+    });
+
+    if (!property) return res.status(404).json({ message: "Property not found or unauthorized" });
+
+    res.json({ message: "Property deleted successfully." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// GET ALL PROPERTIES BY LOGGED-IN AGENT
+export const getAllAgentProperties = async (req, res) => {
+  try {
+    const properties = await Property.find({
+      postedByAgent: req.agent.id
+    }).sort({ createdAt: -1 });
+
+    res.json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
