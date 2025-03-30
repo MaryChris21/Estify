@@ -13,13 +13,12 @@ import UserProperties from './Components/UserProperties.jsx'
 import AgentSignup from './Components/AgentSignup.jsx'
 import AgentLogin from './Components/AgentLogin.jsx'
 import AgentDashboard from './Components/AgentDashboard.jsx'
-<<<<<<< HEAD
-=======
+
 import DynamicReport from './Components/DynamicReport.jsx'
 
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
->>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
+
 
 createRoot(document.getElementById('root')).render(
 
@@ -35,11 +34,11 @@ createRoot(document.getElementById('root')).render(
       <Route path='/agent-signup' element={<AgentSignup/>}></Route>
       <Route path='/agent-login' element={<AgentLogin/>}></Route>
       <Route path='/agent-dashboard' element={<AgentDashboard/>}></Route>
-<<<<<<< HEAD
-=======
+
+
       <Route path="/agent/postad" element={<PropertyForm/>} />
       <Route path='/report' element={<DynamicReport/>}></Route>
->>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
+
     </Routes>
   </Router>
   

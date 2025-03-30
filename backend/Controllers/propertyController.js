@@ -1,5 +1,6 @@
 import Property from "../Models/PropertyModel.js";
 
+// 🏠 PROPERTY CONTROLLERS
 
 // SUBMIT NEW PROPERTY (Agent → Admin Approval)
 export const submitPropertyRequest = async (req, res) => {
@@ -24,10 +25,8 @@ export const submitPropertyRequest = async (req, res) => {
       district,
       price,
       image,
-
       status: "pending",
       requestType: "add",
-
       postedByAgent: req.agent.id
     });
 
@@ -76,7 +75,7 @@ export const approvePropertyRequest = async (req, res) => {
   }
 };
 
-
+// GET ALL APPROVED PROPERTIES WITH FILTERS
 export const getAllProperties = async (req, res) => {
   try {
     const { district, propertyType, minPrice, maxPrice } = req.query;
@@ -99,7 +98,6 @@ export const getAllProperties = async (req, res) => {
 
 // GET PROPERTY BY ID (only approved)
 export const getPropertyById = async (req, res) => {
-<<<<<<< HEAD
   try {
     const property = await Property.findById(req.params.id);
     if (!property || property.status !== "approved") {
@@ -109,13 +107,6 @@ export const getPropertyById = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-=======
-  const property = await Property.findById(req.params.id);
-  if (!property || property.status !== "approved") {
-    return res.status(404).json({ message: "Not found" });
-  }
-  res.json(property);
->>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
 };
 
 // REQUEST TO UPDATE PROPERTY (Agent → Admin Approval)
@@ -211,128 +202,6 @@ export const getAgentProperties = async (req, res) => {
       requestType: "add"
     });
     res.json(properties);
-
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// CREATE PROPERTY DIRECTLY
-export const createPropertyDirect = async (req, res) => {
-  try {
-    const image = req.file?.filename || null;
-    const {
-      title,
-      description,
-      contactName,
-      contactNumber,
-      propertyType,
-      district,
-      price
-    } = req.body;
-
-    const property = new Property({
-      title,
-      description,
-      contactName,
-      contactNumber,
-      propertyType,
-      district,
-      price,
-      image,
-      status: "approved",
-      requestType: "add",
-      postedByAgent: req.agent.id,
-    });
-
-    await property.save();
-    res.status(201).json({ message: "Property added successfully.", property });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// UPDATE PROPERTY DIRECTLY
-export const updatePropertyDirect = async (req, res) => {
-  try {
-    const property = await Property.findOne({
-      _id: req.params.id,
-      postedByAgent: req.agent.id
-    });
-
-    if (!property) return res.status(404).json({ message: "Property not found or unauthorized" });
-
-    const image = req.file?.filename || property.image;
-
-    const {
-      title,
-      description,
-      contactName,
-      contactNumber,
-      propertyType,
-      district,
-      price
-    } = req.body;
-
-    property.title = title || property.title;
-    property.description = description || property.description;
-    property.contactName = contactName || property.contactName;
-    property.contactNumber = contactNumber || property.contactNumber;
-    property.propertyType = propertyType || property.propertyType;
-    property.district = district || property.district;
-    property.price = price || property.price;
-    property.image = image;
-
-    await property.save();
-    res.json({ message: "Property updated successfully.", property });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// DELETE PROPERTY DIRECTLY
-export const deletePropertyDirect = async (req, res) => {
-  try {
-    const property = await Property.findOneAndDelete({
-      _id: req.params.id,
-      postedByAgent: req.agent.id
-    });
-
-    if (!property) return res.status(404).json({ message: "Property not found or unauthorized" });
-
-    res.json({ message: "Property deleted successfully." });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// GET ALL PROPERTIES BY LOGGED-IN AGENT
-export const getAllAgentProperties = async (req, res) => {
-  try {
-    const properties = await Property.find({
-      postedByAgent: req.agent.id
-    }).sort({ createdAt: -1 });
-
-    res.json(properties);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// GET FILTERED REPORT (Dynamic)
-export const getFilteredReport = async (req, res) => {
-  try {
-    const { type, status, district, agentId } = req.query;
-    const query = {};
-
-    if (type) query.propertyType = type;
-    if (status) query.status = status;
-    if (district) query.district = district;
-    if (agentId) query.postedByAgent = agentId;
-
-    const results = await Property.find(query).populate("postedByAgent", "email");
-    res.json(results);
->>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
