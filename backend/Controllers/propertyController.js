@@ -1,10 +1,6 @@
 import Property from "../Models/PropertyModel.js";
 
-<<<<<<< HEAD
-// 🏠 PROPERTY CONTROLLERS
 
-=======
->>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
 // SUBMIT NEW PROPERTY (Agent → Admin Approval)
 export const submitPropertyRequest = async (req, res) => {
   try {
@@ -28,11 +24,10 @@ export const submitPropertyRequest = async (req, res) => {
       district,
       price,
       image,
-<<<<<<< HEAD
+
       status: "pending",
       requestType: "add",
-=======
->>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
+
       postedByAgent: req.agent.id
     });
 
@@ -81,11 +76,7 @@ export const approvePropertyRequest = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-// GET ALL APPROVED PROPERTIES WITH FILTERS
-=======
-// GET ALL APPROVED PROPERTIES
->>>>>>> fa71c03728e8271397cfbd1994cb2c379e8d37e8
+
 export const getAllProperties = async (req, res) => {
   try {
     const { district, propertyType, minPrice, maxPrice } = req.query;
