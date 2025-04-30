@@ -2,6 +2,8 @@
 # Estify
 
 <!-- This line was added for demo pull request -->
+### Demo Feature 2
+This is a second test change for GitHub pull request demonstration.
 
 🏡 Estify – Real Estate Booking Platform
 Estify is a full-stack MERN application for browsing, filtering, and booking real estate properties. It includes user and agent roles, admin approvals, rent-based bookings, and a secure JWT-based authentication system.
