@@ -23,13 +23,16 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(helmet());
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    credentials: true,
-  })
-);
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
+// CORS configuration
+app.use(cors({
+  origin: "http://localhost:5173", // Your frontend URL
+  credentials: true
+}));
+
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -52,7 +55,12 @@ app.use("/api/bookings", BookingRoutes);
 app.use("/api/auth", AuthRoutes);
 app.use("/api/admin", AdminRoutes);
 app.use("/api/inquiries", InquiryRoutes);
-app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
+
+// Serve static files with CORS enabled
+app.use("/uploads", (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(path.resolve(), "uploads")));
 
 // Health Check
 app.get("/api/health", (req, res) => {
@@ -68,7 +76,7 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 // Start Server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
