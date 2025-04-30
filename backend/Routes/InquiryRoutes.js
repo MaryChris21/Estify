@@ -1,6 +1,6 @@
 // Routes/InquiryRoutes.js
 import express from "express";
-import * as InquiryController from "../Controllers/InquiryController.js"; // Adjusted path with .js extension
+import * as InquiryController from "../Database/Controllers/InquiryController.js"; // Adjusted path with .js extension
 import authenticate from "../middleware/authenticate.js"; // Adjusted path with .js extension
 import isAdmin from "../middleware/isAdmin.js"; // Adjusted path with .js extension
 
