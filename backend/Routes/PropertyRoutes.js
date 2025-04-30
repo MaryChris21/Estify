@@ -14,41 +14,39 @@ import {
   createPropertyDirect,
   updatePropertyDirect,
   deletePropertyDirect,
-  getAllAgentProperties
-} from "../Controllers/PropertyController.js";
+  getAllAgentProperties,
+  getFilteredReport
+} from "../Database/Controllers/PropertyController.js";
 
 const router = express.Router();
 
-// File upload configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads/"),
   filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
 });
 const upload = multer({ storage });
 
-/** 
- * Public Routes 
- */
-router.get("/", getAllProperties);
-router.get("/:id", getPropertyById);
-router.get("/pending", getPendingRequests);
-router.post("/approve/:id", approvePropertyRequest);
-router.delete("/reject/:id", rejectPropertyRequest);
-
-/** 
- * Routes for Agents (with verification)
- */
+// Agent Routes (with approval flow)
 router.post("/post", verifyAgent, upload.single("image"), submitPropertyRequest);
 router.post("/update", verifyAgent, upload.single("image"), requestPropertyUpdate);
 router.delete("/delete/:id", verifyAgent, requestPropertyDelete);
 router.get("/my-properties", verifyAgent, getAgentProperties);
-router.get("/all-mine", verifyAgent, getAllAgentProperties);
 
-/**
- * Direct Property Management for Agents
- */
+// Agent Routes (direct CRUD)
 router.post("/direct/add", verifyAgent, upload.single("image"), createPropertyDirect);
 router.put("/direct/update/:id", verifyAgent, upload.single("image"), updatePropertyDirect);
 router.delete("/direct/delete/:id", verifyAgent, deletePropertyDirect);
+router.get("/all-mine", verifyAgent, getAllAgentProperties);
+
+// Admin Routes
+router.get("/pending", getPendingRequests);
+router.post("/approve/:id", approvePropertyRequest);
+router.delete("/reject/:id", rejectPropertyRequest);
+router.get("/report", getFilteredReport);
+
+// Public Routes
+router.get("/", getAllProperties);
+router.get("/:id", getPropertyById);
+router.post("/add", upload.single("image"), submitPropertyRequest);
 
 export default router;
